@@ -70,9 +70,23 @@ class SinhVienController extends Controller
             'dia_chi'       => 'nullable|max:500',
         ]);
 
-        SinhVien::create($data);
+        $sinhVien = SinhVien::create($data);
 
-        return redirect()->route('ketoan.sinh-vien.index')->with('success', 'Thêm sinh viên thành công!');
+        $cacDotThuDangMo = \App\Models\DotThu::where('trang_thai', 'dang_thu')->get();
+
+        foreach ($cacDotThuDangMo as $dotThu) {
+            \App\Models\HocPhi::create([
+                'sinh_vien_id'      => $sinhVien->id,
+                'dot_thu_id'        => $dotThu->id,
+                'so_tien_phai_dong' => 5000000,
+                'so_tien_da_dong'   => 0,
+                'trang_thai'        => 'chua_dong' 
+            ]);
+        }
+
+        // 3. Chuyển hướng về danh sách
+        return redirect()->route('ketoan.sinh-vien.index')
+                         ->with('success', "Đã thêm sinh viên {$data['ho_ten']} thành công và tự động thêm vào đợt thu đang mở.");
     }
 
     // ── Cập nhật ─────────────────────────────────────────────────
