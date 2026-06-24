@@ -6,6 +6,7 @@ use App\Models\DotThu;
 use App\Observers\DotThuObserver;
 use App\Services\{HocPhiService, ThanhToanService, BaoCaoService, ThongBaoService};
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <-- 1. Bổ sung thư viện URL ở đây
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,5 +24,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Đăng ký Observer — DotThu sẽ tự kích hoạt Observer
         DotThu::observe(DotThuObserver::class);
+
+        // <-- 2. Thêm đoạn code ép HTTPS vào đây (khi chạy trên mạng)
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }
