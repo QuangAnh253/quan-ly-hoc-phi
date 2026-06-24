@@ -75,12 +75,21 @@ class SinhVienController extends Controller
         $cacDotThuDangMo = \App\Models\DotThu::where('trang_thai', 'dang_thu')->get();
 
         foreach ($cacDotThuDangMo as $dotThu) {
+            $soTinChi = 3;
+            $donGia = $dotThu->don_gia_tin_chi;
+            $tongTien = $soTinChi * $donGia;
+
             \App\Models\HocPhi::create([
-                'sinh_vien_id'      => $sinhVien->id,
-                'dot_thu_id'        => $dotThu->id,
-                'so_tien_phai_dong' => 5000000,
-                'so_tien_da_dong'   => 0,
-                'trang_thai'        => 'chua_dong' 
+                'sinh_vien_id'    => $sinhVien->id,
+                'dot_thu_id'      => $dotThu->id,
+                'so_tin_chi'      => $soTinChi,
+                'don_gia_tin_chi' => $donGia,
+                'phan_tram_giam'  => 0,
+                'so_tien_giam'    => 0,
+                'tong_phai_dong'  => $tongTien,
+                'da_dong'         => 0,
+                'phi_phat'        => 0,
+                'trang_thai'      => 'chua_dong' 
             ]);
         }
 

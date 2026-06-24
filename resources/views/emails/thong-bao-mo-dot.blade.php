@@ -25,9 +25,18 @@
         </tr>
     </table>
 
+    <p style="margin: 20px 0;">
+        <a href="https://hocphi.lequanganh.id.vn/login" style="background-color:#0d6efd;color:#ffffff;text-decoration:none;padding:10px 16px;border-radius:4px;font-weight:bold;display:inline-block;">Truy cập cổng thanh toán</a>
+    </p>
+
     <p>Vui lòng đóng học phí đúng hạn để tránh bị tính phí phạt.</p>
 
     <hr style="border:none;border-top:1px solid #dee2e6;margin:24px 0">
-    <p style="font-size:12px;color:#6c757d">Email tự động từ hệ thống Quản lý học phí – UTT</p>
+    
+    <div style="background-color:#fff3cd;color:#856404;padding:12px;border-radius:4px;font-size:13px;margin-bottom:15px;border:1px solid #ffeeba;line-height:1.5;">
+        <strong>⚠️ LƯU Ý QUAN TRỌNG:</strong> Đây chỉ là email tự động được gửi từ hệ thống thử nghiệm nhằm phục vụ mục đích bảo vệ đồ án môn học tại UTT. Toàn bộ số liệu và yêu cầu thanh toán đều là giả định, không có giá trị pháp lý. Xin vui lòng bỏ qua email này.
+    </div>
+
+    <p style="font-size:12px;color:#6c757d">Email tự động từ hệ thống thử nghiệm Quản lý học phí – UTT</p>
 </body>
 </html>
