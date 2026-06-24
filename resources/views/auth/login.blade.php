@@ -8,7 +8,7 @@
 <style>
 body{
   background-color:#e9eef5;
-  background-image:url('/images/login-background.png');
+  background-image:url('/images/login-background.jpg');
   background-position:center center;
   background-repeat:no-repeat;
   background-size:cover;
