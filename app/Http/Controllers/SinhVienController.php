@@ -72,8 +72,7 @@ class SinhVienController extends Controller
 
         SinhVien::create($data);
 
-        return redirect()->route('sinh-vien.index')
-                         ->with('success', "Đã thêm sinh viên {$data['ho_ten']} thành công.");
+        return redirect()->route('ketoan.sinh-vien.index')->with('success', 'Thêm sinh viên thành công!');
     }
 
     // ── Cập nhật ─────────────────────────────────────────────────
@@ -99,7 +98,7 @@ class SinhVienController extends Controller
 
         $sinhVien->update($data);
 
-        return redirect()->route('sinh-vien.show', $sinhVien)
+        return redirect()->route('ketoan.sinh-vien.show', $sinhVien)
                          ->with('success', 'Đã cập nhật thông tin sinh viên.');
     }
 
@@ -107,7 +106,7 @@ class SinhVienController extends Controller
     public function destroy(SinhVien $sinhVien)
     {
         $sinhVien->update(['active' => false]);
-        return redirect()->route('sinh-vien.index')
+        return redirect()->route('ketoan.sinh-vien.index')
                          ->with('success', "Đã vô hiệu hóa sinh viên {$sinhVien->ho_ten}.");
     }
 }
