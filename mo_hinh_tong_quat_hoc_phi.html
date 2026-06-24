@@ -1,0 +1,252 @@
+
+<h2 class="sr-only">Mô hình tổng quát hệ thống quản lý thu học phí — toàn bộ tính năng theo 3 role người dùng và 4 tầng kiến trúc</h2>
+<style>
+* { box-sizing: border-box; }
+.wrap { font-family: var(--font-sans); color: var(--color-text-primary); }
+.section-label { font-size: 11px; font-weight: 500; letter-spacing: .04em; color: var(--color-text-tertiary); text-transform: uppercase; margin: 0 0 8px; }
+.role-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-bottom: 14px; }
+.role-card { border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); overflow: hidden; }
+.role-header { padding: 10px 12px 8px; display: flex; align-items: center; gap: 8px; }
+.role-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+.role-name { font-size: 13px; font-weight: 500; }
+.role-sub  { font-size: 11px; color: var(--color-text-secondary); }
+.feat-list { padding: 0 12px 10px; list-style: none; margin: 0; }
+.feat-list li { font-size: 12px; color: var(--color-text-secondary); padding: 3px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: center; gap: 6px; }
+.feat-list li:last-child { border-bottom: none; }
+.feat-list li i { font-size: 13px; flex-shrink: 0; }
+
+.ra  { background: #EEEDFE; border-color: #AFA9EC; }
+.ra .role-avatar { background: #CECBF6; color: #26215C; }
+.ra .role-name   { color: #3C3489; }
+.ra .feat-list li i { color: #534AB7; }
+
+.rk  { background: #E1F5EE; border-color: #5DCAA5; }
+.rk .role-avatar { background: #9FE1CB; color: #04342C; }
+.rk .role-name   { color: #085041; }
+.rk .feat-list li i { color: #1D9E75; }
+
+.rs  { background: #E6F1FB; border-color: #85B7EB; }
+.rs .role-avatar { background: #B5D4F4; color: #042C53; }
+.rs .role-name   { color: #0C447C; }
+.rs .feat-list li i { color: #378ADD; }
+
+.flow-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+.flow-card { border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); padding: 10px 12px; cursor: pointer; transition: background .15s; }
+.flow-card:hover { background: var(--color-background-secondary); }
+.flow-num { font-size: 11px; font-weight: 500; margin-bottom: 4px; }
+.flow-title { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+.flow-sub { font-size: 11px; color: var(--color-text-secondary); line-height: 1.4; }
+.arrow-between { display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--color-text-tertiary); }
+
+.f0 { border-color: #AFA9EC; } .f0 .flow-num { color: #534AB7; }
+.f1 { border-color: #5DCAA5; } .f1 .flow-num { color: #1D9E75; }
+.f2 { border-color: #85B7EB; } .f2 .flow-num { color: #185FA5; }
+.f3 { border-color: #FAC775; } .f3 .flow-num { color: #854F0B; }
+
+.pattern-row { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+.pat-card { border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); padding: 8px 10px; text-align: center; }
+.pat-name { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+.pat-use  { font-size: 11px; color: var(--color-text-secondary); line-height: 1.4; }
+.pp { border-color: #AFA9EC; background: #EEEDFE; } .pp .pat-name { color: #3C3489; }
+.pt { border-color: #5DCAA5; background: #E1F5EE; } .pt .pat-name { color: #085041; }
+.pb { border-color: #85B7EB; background: #E6F1FB; } .pb .pat-name { color: #0C447C; }
+.po { border-color: #FAC775; background: #FAEEDA; } .po .pat-name { color: #633806; }
+.pf { border-color: #ED93B1; background: #FBEAF0; } .pf .pat-name { color: #72243E; }
+
+.module-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 14px; }
+.mod-card { border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); padding: 10px 12px; }
+.mod-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.mod-title { font-size: 13px; font-weight: 500; }
+.mod-feat { font-size: 11px; color: var(--color-text-secondary); padding: 2px 0; display: flex; align-items: flex-start; gap: 4px; line-height: 1.4; }
+
+.detail-box { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.7; margin-top: 6px; display: none; }
+.detail-box.show { display: block; }
+</style>
+
+<div class="wrap">
+
+<p class="section-label">3 nhóm người dùng — phân quyền</p>
+<div class="role-grid">
+  <div class="role-card ra">
+    <div class="role-header">
+      <div class="role-avatar">AD</div>
+      <div><div class="role-name">Admin</div><div class="role-sub">Toàn quyền hệ thống</div></div>
+    </div>
+    <ul class="feat-list">
+      <li><i class="ti ti-users" aria-hidden="true"></i>Quản lý tài khoản & phân quyền</li>
+      <li><i class="ti ti-building" aria-hidden="true"></i>Quản lý khoa, lớp</li>
+      <li><i class="ti ti-calendar" aria-hidden="true"></i>Tạo & quản lý đợt thu</li>
+      <li><i class="ti ti-settings" aria-hidden="true"></i>Cấu hình đơn giá tín chỉ</li>
+      <li><i class="ti ti-chart-bar" aria-hidden="true"></i>Xem toàn bộ báo cáo</li>
+      <li><i class="ti ti-history" aria-hidden="true"></i>Xem log toàn hệ thống</li>
+    </ul>
+  </div>
+  <div class="role-card rk">
+    <div class="role-header">
+      <div class="role-avatar">KT</div>
+      <div><div class="role-name">Kế toán</div><div class="role-sub">Nghiệp vụ thu phí</div></div>
+    </div>
+    <ul class="feat-list">
+      <li><i class="ti ti-search" aria-hidden="true"></i>Tra cứu học phí sinh viên</li>
+      <li><i class="ti ti-credit-card" aria-hidden="true"></i>Ghi nhận thanh toán</li>
+      <li><i class="ti ti-receipt" aria-hidden="true"></i>In biên lai giao dịch</li>
+      <li><i class="ti ti-tag" aria-hidden="true"></i>Cập nhật miễn giảm</li>
+      <li><i class="ti ti-alert-triangle" aria-hidden="true"></i>Xem danh sách công nợ</li>
+      <li><i class="ti ti-file-export" aria-hidden="true"></i>Xuất báo cáo Excel/PDF</li>
+    </ul>
+  </div>
+  <div class="role-card rs">
+    <div class="role-header">
+      <div class="role-avatar">SV</div>
+      <div><div class="role-name">Sinh viên</div><div class="role-sub">Tra cứu cá nhân</div></div>
+    </div>
+    <ul class="feat-list">
+      <li><i class="ti ti-eye" aria-hidden="true"></i>Xem học phí từng đợt</li>
+      <li><i class="ti ti-wallet" aria-hidden="true"></i>Xem số tiền còn nợ</li>
+      <li><i class="ti ti-history" aria-hidden="true"></i>Lịch sử giao dịch cá nhân</li>
+      <li><i class="ti ti-bell" aria-hidden="true"></i>Nhận thông báo đợt thu mới</li>
+      <li><i class="ti ti-download" aria-hidden="true"></i>Tải biên lai thanh toán</li>
+    </ul>
+  </div>
+</div>
+
+<p class="section-label">Luồng nghiệp vụ chính — nhấn để xem chi tiết</p>
+<div class="flow-row">
+  <div class="flow-card f0" onclick="showDetail('dot-thu')">
+    <div class="flow-num">01 — Tạo đợt thu</div>
+    <div class="flow-title">Admin mở đợt</div>
+    <div class="flow-sub">Cấu hình học kỳ, đơn giá, hạn đóng</div>
+  </div>
+  <div class="flow-card f1" onclick="showDetail('tinh-phi')">
+    <div class="flow-num">02 — Tính học phí</div>
+    <div class="flow-title">Strategy tính tự động</div>
+    <div class="flow-sub">Áp đúng diện miễn giảm cho từng SV</div>
+  </div>
+  <div class="flow-card f2" onclick="showDetail('thanh-toan')">
+    <div class="flow-num">03 — Thu tiền</div>
+    <div class="flow-title">Kế toán ghi nhận</div>
+    <div class="flow-sub">Tiền mặt / CK, cập nhật công nợ</div>
+  </div>
+  <div class="flow-card f3" onclick="showDetail('bao-cao')">
+    <div class="flow-num">04 — Báo cáo</div>
+    <div class="flow-title">Tổng kết đợt</div>
+    <div class="flow-sub">Tỷ lệ thu, công nợ, xuất file</div>
+  </div>
+</div>
+<div id="detail-box" class="detail-box"></div>
+
+<p class="section-label">5 design patterns áp dụng</p>
+<div class="pattern-row">
+  <div class="pat-card pp">
+    <div class="pat-name">Strategy</div>
+    <div class="pat-use">Tính học phí theo 4 diện SV</div>
+  </div>
+  <div class="pat-card pt">
+    <div class="pat-name">Facade</div>
+    <div class="pat-use">HocPhiService — 1 điểm vào duy nhất</div>
+  </div>
+  <div class="pat-card pb">
+    <div class="pat-name">Observer</div>
+    <div class="pat-use">Tự thông báo SV khi mở đợt thu</div>
+  </div>
+  <div class="pat-card po">
+    <div class="pat-name">Singleton</div>
+    <div class="pat-use">Kết nối DB — 1 instance duy nhất</div>
+  </div>
+  <div class="pat-card pf">
+    <div class="pat-name">Factory</div>
+    <div class="pat-use">Tạo đúng loại MienGiam theo diện</div>
+  </div>
+</div>
+
+<p class="section-label">6 module code chính</p>
+<div class="module-grid">
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-users" style="font-size:16px;color:#534AB7" aria-hidden="true"></i>
+      <span class="mod-title">Quản lý sinh viên</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>CRUD sinh viên, tìm kiếm, lọc theo khoa/lớp</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Gắn diện miễn giảm, upload chứng từ</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Xem tổng công nợ từng sinh viên</div>
+  </div>
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-calendar" style="font-size:16px;color:#1D9E75" aria-hidden="true"></i>
+      <span class="mod-title">Quản lý đợt thu</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Tạo đợt, cấu hình đơn giá, hạn đóng, phí phạt</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Tự tính học phí tất cả SV khi mở đợt</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Mở / đóng / hủy đợt thu</div>
+  </div>
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-credit-card" style="font-size:16px;color:#185FA5" aria-hidden="true"></i>
+      <span class="mod-title">Thu & thanh toán</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Ghi nhận thanh toán (tiền mặt / chuyển khoản)</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Tự sinh mã giao dịch, cập nhật công nợ</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>In biên lai PDF, tra cứu lịch sử</div>
+  </div>
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-chart-bar" style="font-size:16px;color:#854F0B" aria-hidden="true"></i>
+      <span class="mod-title">Báo cáo & thống kê</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Tổng thu / còn nợ theo đợt, theo khoa</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Danh sách SV chưa đóng / quá hạn</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Xuất Excel & PDF báo cáo tổng hợp</div>
+  </div>
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-tag" style="font-size:16px;color:#72243E" aria-hidden="true"></i>
+      <span class="mod-title">Miễn giảm học phí</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>7 diện: hộ nghèo, chính sách, học bổng...</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Miễn % hoặc cố định (VNĐ)</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Lưu số quyết định, chứng từ kèm theo</div>
+  </div>
+  <div class="mod-card">
+    <div class="mod-header">
+      <i class="ti ti-bell" style="font-size:16px;color:#3B6D11" aria-hidden="true"></i>
+      <span class="mod-title">Thông báo</span>
+    </div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Tự gửi email khi mở đợt thu mới (Observer)</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Nhắc nhở khi sắp hết hạn đóng</div>
+    <div class="mod-feat"><i class="ti ti-chevron-right" style="font-size:11px;margin-top:2px" aria-hidden="true"></i>Thông báo xác nhận sau khi thanh toán</div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+  <button onclick="sendPrompt('Viết cho tôi Strategy Pattern — interface ITinhHocPhiStrategy và 4 class implement đầy đủ code PHP ↗')" style="font-size:12px;padding:7px 14px;border-radius:var(--border-radius-md);cursor:pointer">
+    <i class="ti ti-code" aria-hidden="true"></i> Code Strategy Pattern ↗
+  </button>
+  <button onclick="sendPrompt('Viết HocPhiService Facade — điều phối toàn bộ business logic đầy đủ code PHP ↗')" style="font-size:12px;padding:7px 14px;border-radius:var(--border-radius-md);cursor:pointer">
+    <i class="ti ti-layers" aria-hidden="true"></i> Code Facade Service ↗
+  </button>
+  <button onclick="sendPrompt('Viết Controllers và Routes cho toàn bộ hệ thống quản lý học phí ↗')" style="font-size:12px;padding:7px 14px;border-radius:var(--border-radius-md);cursor:pointer">
+    <i class="ti ti-router" aria-hidden="true"></i> Code Controllers ↗
+  </button>
+</div>
+
+</div>
+
+<script>
+const details = {
+  'dot-thu': '<strong>Luồng tạo đợt thu:</strong> Admin điền thông tin đợt (tên, học kỳ, năm học, đơn giá/tín chỉ, hạn đóng, phí phạt/ngày) → Hệ thống lưu DotThu với trạng thái "sắp mở" → Admin chuyển sang "đang thu" → <strong>Observer kích hoạt</strong>: DotThuObserver tự gọi ThongBaoService gửi email đến tất cả sinh viên liên quan → Đồng thời HocPhiService tự tính và tạo bản ghi HocPhi cho từng SV theo đúng diện miễn giảm.',
+  'tinh-phi': '<strong>Strategy Pattern trong tính học phí:</strong> HocPhiService nhận SinhVien + DotThu → kiểm tra dien_mien_giam → MienGiamFactory::create() trả về đúng strategy → strategy.tinh(soTinChi, donGia, mienGiam) tính ra số tiền cụ thể. Ví dụ: SV hộ nghèo 18TC × 440k = 7.92tr → HoNgheoStrategy trừ 100% → tong_phai_dong = 0. SV bình thường → BinhThuongStrategy → tong_phai_dong = 7.92tr. Thêm diện mới chỉ cần thêm 1 class mới, không sửa code cũ.',
+  'thanh-toan': '<strong>Luồng ghi nhận thanh toán:</strong> Kế toán chọn SV → hệ thống hiện công nợ hiện tại → nhập số tiền + hình thức (tiền mặt/CK/thẻ) → ThanhToan::generateMaGiaoDich() tự sinh mã TT-YYYYMMDD-XXXX → lưu bản ghi ThanhToan → cộng vào hoc_phi.da_dong → HocPhi::capNhatTrangThai() tự chuyển trạng thái (chua_dong → dong_mot_phan → da_dong_du) → có thể in biên lai PDF ngay.',
+  'bao-cao': '<strong>Báo cáo tổng hợp:</strong> BaoCaoService query theo đợt thu → tổng phai_thu, da_thu, con_no → group by khoa → tính tỷ lệ % thu được từng khoa → danh sách SV quá hạn chưa đóng (kèm số ngày quá hạn × phi_phat_ngay) → xuất Excel dùng PhpSpreadsheet hoặc PDF dùng DomPDF → Admin/KeToan download về.',
+};
+function showDetail(key) {
+  const box = document.getElementById('detail-box');
+  if (box.dataset.key === key && box.classList.contains('show')) {
+    box.classList.remove('show');
+    box.dataset.key = '';
+  } else {
+    box.innerHTML = details[key] || '';
+    box.classList.add('show');
+    box.dataset.key = key;
+  }
+}
+</script>
